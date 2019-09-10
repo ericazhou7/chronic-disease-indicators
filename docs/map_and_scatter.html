@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<style type="text/css">
+
+h1 {
+  color: white;
+}
+
+/* On mouse hover, lighten state color */
+path:hover {
+  cursor: pointer;
+}
+
+/* Style for Custom Tooltip */
+div.tooltip {
+ 	position: absolute;
+	text-align: center;
+  width: auto;
+  padding: 10px;
+	font: 12px sans-serif;
+	background: black;
+  color: white;
+	border:1px solid grey;
+	border-radius: 5px;
+	pointer-events: none;
+}
+
+/* Legend Font Style */
+body {
+	font: 11px sans-serif;
+  background-color: #222222;
+  color: white;
+  text-align: center;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#menu {
+  overflow: hidden;
+  text-align: center;
+  margin-bottom: 10px;
+  width: auto;
+}
+
+#menu .option-group {
+  overflow: hidden;
+  display: inline-block;
+  margin: 0px 20px 0px;
+}
+
+#menu .option {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 12px;
+  border: 1px solid white;
+  color: white;
+}
+
+#menu .option:hover {
+  background-color: #888888;
+  cursor: pointer;
+}
+
+#menu .active {
+  background-color: white;
+  color: #222222;
+}
+
+#state-menu {
+  position: absolute;
+  top: 100px;
+  left: 200px;
+}
+
+#state-menu .state-option-group {
+  margin-bottom: 20px;
+}
+
+#state-menu .state-option {
+  /* float: left; */
+  padding: 10px 20px;
+  border: 1px solid white;
+  border-radius: 10px;
+  color: white;
+}
+
+#state-menu .state-option:hover {
+  background-color: #888888;
+  cursor: pointer;
+}
+
+#state-option-description {
+  position: absolute;
+  top: 550px;
+  left: 200px;
+  max-width: 135px;
+}
+
+.axis path {
+  stroke: white;
+  stroke-width: 3px;
+}
+
+.tick line {
+  stroke-width: 2px;
+}
+
+.tick text {
+  fill: white;
+  font-size: 12px;
+}
+
+.selected {
+  opacity: 1 !important;
+  stroke: black !important;
+  stroke-width: 1px;
+}
+
+/* Legend Position Style */
+#legend {
+  /* text-align: right; */
+}
+
+#legend svg {
+  margin-top: 50px;
+}
+
+#summary l {
+  float: left;
+  font-size: 15px;
+  /* text-align: left; */
+  margin-left: 40px;
+}
+
+#summary ol {
+  text-align: left;
+}
+
+#footer {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  text-align: left;
+}
+
+#footer a {
+  color: #888;
+}
+
+</style>
+</head>
+<body>
+
+  <div id="menu">
+    <div class="option-group">
+      <div class="option active" id="OverallDiff">Overall</div>
+    </div>
+
+    <div class="option-group">
+      <div class="option" id="FemaleDiff">Female</div>
+      <div class="option" id="MaleDiff">Male</div>
+    </div>
+
+    <div class="option-group">
+      <div class="option" id="AmInAlaskaDiff">American Indian</div>
+      <div class="option" id="AsianDiff">Asian</div>
+      <div class="option" id="BlackDiff">Black</div>
+      <div class="option" id="HispanicDiff">Hispanic</div>
+      <div class="option" id="WhiteDiff">White</div>
+    </div>
+  </div>
+
+  <div id="state-menu">
+    <div class="state-option-group">
+      <div class="state-option" id="allStates">Select All States</div>
+      <div class="state-option" id="noStates">Deselect All States</div>
+    </div>
+    <div class="state-option-group" id="region">
+      <div class="state-option" id="Northeast">Northeast</div>
+      <div class="state-option" id="Midwest">Midwest</div>
+      <div class="state-option" id="South">South</div>
+      <div class="state-option" id="West">West</div>
+    </div>
+    <div class="state-option-group" id="population">
+      <div class="state-option" id="MoreUrban">More Urban</div>
+      <div class="state-option" id="LessUrban">Less Urban</div>
+    </div>
+    <div class="state-option-group" id="political">
+      <div class="state-option" id="Democrat">Democrat</div>
+      <div class="state-option" id="Republican">Republican</div>
+    </div>
+  </div>
+
+  <div id="map" />
+
+  <div id="state-option-description" />
+
+  <div id="legend" />
+
+<script type="text/javascript">
+
+/*  This visualization was made possible by modifying code provided by:
+
+Scott Murray, Choropleth example from "Interactive Data Visualization for the Web"
+https://github.com/alignedleft/d3-book/blob/master/chapter_12/05_choropleth.html
+
+Malcolm Maclean, tooltips example tutorial
+http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
+
+Mike Bostock, Pie Chart Legend
+http://bl.ocks.org/mbostock/3888852  */
+
+function fillColor(d, mag) {
+  var value = d.properties.value;
+  if (value) {
+    if (value < 0) {
+      return d3.interpolate("#ffffff", "#ff7f50")(Math.abs(value)/mag);
+    } else {
+      return d3.interpolate("#ffffff", "#50d0ff")(Math.abs(value)/mag);
+    }
+  } else {
+    return "#000000";
+  }
+
+  return d3.interpolate("#ffffff", "#000000")(value);
+}
+
+//Width and height of map
+var width = 960;
+var height = 500;
+
+// D3 Projection
+var projection = d3.geo.albersUsa()
+				   .translate([width/2, height/2])    // translate to center of screen
+				   .scale([1000]);          // scale things down so see entire US
+
+// Define path generator
+var path = d3.geo.path()               // path generator that will convert GeoJSON to SVG paths
+		  	 .projection(projection);  // tell path generator to use albersUsa projection
+
+
+// Define linear scale for output
+var color = d3.scale.linear()
+			  .range(["rgb(213,222,217)","rgb(69,173,168)","rgb(84,36,55)","rgb(217,91,67)"]);
+
+//Create SVG element and append map to the SVG
+var svg = d3.select("body")
+			.append("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+// Append Div for tooltip to SVG
+var div = d3.select("body")
+		    .append("div")
+    		.attr("class", "tooltip")
+    		.style("opacity", 0);
+
+var features = d3.selectAll(".option")
+  .on("click", function() {
+    // mark which feature is active
+    d3.selectAll(".option")
+      .classed("active", false);
+    d3.select("#"+this.id)
+      .classed("active", true);
+    updateMapFeature(this.id);
+  });
+
+var selectStates = d3.select("#allStates")
+  .on("click", function() {
+    updateMapSetStates(true);
+  });
+
+var deselectStates = d3.select("#noStates")
+  .on("click", function() {
+    updateMapSetStates(false);
+  });
+
+function setSelectedStates(selectedStates) {
+  updateMapSetStates(false);
+  for (var s in selectedStates) {
+    var state = selectedStates[s];
+    globalStates[state] = true;
+  }
+}
+
+d3.json("data/state-categories.json", function(json) {
+  for (var set in json) {
+    var category = d3.select("#" + json[set].type);
+    d3.select("#" + set)
+
+      .on("click", function() {
+        var set = json[this.id];
+        updateMapSetStates(false);
+        for (var s in set.states) {
+          var state = set.states[s];
+          globalStates[state] = true;
+        }
+      })
+
+      .on("mouseover", function() {
+        var set = json[this.id];
+        d3.select("#state-option-description")
+          .text(set.description);
+      })
+
+      // fade out tooltip on mouse out
+      .on("mouseout", function() {
+        d3.select("#state-option-description")
+          .text("");
+      });
+  }
+});
+
+var globalFeature = 'OverallDiff';
+var globalStates = {
+  "Alabama": true,
+  "Alaska": true,
+  "Arizona": true,
+  "Arkansas": true,
+  "California": true,
+  "Colorado": true,
+  "Connecticut": true,
+  "Delaware": true,
+  "District of Columbia": true,
+  "Florida": true,
+  "Georgia": true,
+  "Hawaii": true,
+  "Idaho": true,
+  "Illinois": true,
+  "Indiana": true,
+  "Iowa": true,
+  "Kansas": true,
+  "Kentucky": true,
+  "Louisiana": true,
+  "Maine": true,
+  "Maryland": true,
+  "Massachusetts": true,
+  "Michigan": true,
+  "Minnesota": true,
+  "Mississippi": true,
+  "Missouri": true,
+  "Montana": true,
+  "Nebraska": true,
+  "Nevada": true,
+  "New Hampshire": true,
+  "New Jersey": true,
+  "New Mexico": true,
+  "New York": true,
+  "North Carolina": true,
+  "North Dakota": true,
+  "Ohio": true,
+  "Oklahoma": true,
+  "Oregon": true,
+  "Pennsylvania": true,
+  "Rhode Island": true,
+  "South Carolina": true,
+  "South Dakota": true,
+  "Tennessee": true,
+  "Texas": true,
+  "Utah": true,
+  "Vermont": true,
+  "Virginia": true,
+  "Washington": true,
+  "West Virginia": true,
+  "Wisconsin": true,
+  "Wyoming": true
+};
+
+function updateMapSetStates(bool) {
+  for (var state in globalStates) {
+    globalStates[state] = bool;
+  }
+  updateMap(globalFeature, globalStates);
+}
+
+function updateMapFeature(feature) {
+  globalFeature = feature;
+  updateMap(globalFeature, globalStates);
+}
+
+function updateMap(feature, selectedStates) {
+  d3.selectAll("svg").remove();
+  var svg = d3.select("#map")
+  			.append("svg")
+  			.attr("width", width)
+  			.attr("height", height);
+
+  // Load in my states data!
+  d3.csv("data/poverty_demographics.csv", function(data) {
+    // color.domain([0,1,2,3]); // setting the range of the input data
+    var dataValueMagnitude = 0;
+
+    // Load GeoJSON data and merge with states data
+    d3.json("data/us-states.json", function(json) {
+
+      // Loop through each state data value in the .csv file
+      for (var i = 0; i < data.length; i++) {
+
+      	// Grab State Name
+      	var dataState = data[i].State;
+        var dataValue;
+
+        if (selectedStates[dataState]) {
+          // Grab data value
+        	dataValue = data[i][feature];
+
+          if (Math.abs(dataValue) > dataValueMagnitude) {
+            dataValueMagnitude = Math.abs(dataValue);
+          }
+        } else {
+          dataValue = null;
+        }
+
+      	// Find the corresponding state inside the GeoJSON
+      	for (var j = 0; j < json.features.length; j++)  {
+      		var jsonState = json.features[j].properties.name;
+
+      		if (dataState == jsonState) {
+
+      		// Copy the data value into the JSON
+      		json.features[j].properties.value = dataValue;
+
+      		// Stop looking through the JSON
+      		break;
+      		}
+      	}
+      }
+
+      // don't show scatter plot without states selected
+      if (dataValueMagnitude !== 0) {
+        var margin = {top: 20, right: 150, bottom: 20, left: 110};
+        var scatterHeight = 50;
+
+        var x = d3.scale.linear()
+                  .domain([-1*dataValueMagnitude, dataValueMagnitude])
+                  .range([ 0, width - margin.left - margin.right ]);
+
+        var chart = d3.select('body')
+          .append('svg:svg')
+          .attr('width', width)
+          .attr('height', scatterHeight + margin.top + margin.bottom)
+          .attr('class', 'chart');
+
+        var main = chart.append('g')
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+          .attr('width', width - margin.left - margin.right)
+          .attr('height', scatterHeight)
+          .attr('class', 'main');
+
+        // draw the x axis
+        var xAxis = d3.axisBottom()
+          .scale(x);
+
+        main.append('g')
+          .attr('transform', 'translate(0,' + scatterHeight + ')')
+          .attr('class', 'axis')
+          .call(xAxis)
+          .selectAll(".tick line").attr("stroke", "#fff")
+          .selectAll(".tick text").attr("fill", "#fff");
+
+        var g = main.append("svg:g");
+
+        var dots = g.selectAll("scatter-dots")
+          .data(json.features)
+          .enter().append("svg:circle")
+              .attr("cx", function (d,i) { return x(d.properties.value); } )
+              .attr("cy", function (d) { return scatterHeight/2; } )
+              .attr("r", 5)
+              .style("visibility", function(d) {
+                return d.properties.value ? "visible" : "hidden";
+              })
+              .style("opacity", 0.5)
+              .attr("fill", function(d) {
+                return fillColor(d, dataValueMagnitude);
+              })
+
+              .on("mouseover", function(d) {
+                var label = d.properties.name + ": ";
+
+                div.transition()
+                  .duration(200)
+                  .style("opacity", 1);
+                div.text(label + d.properties.value)
+                  .style("left", (d3.event.pageX) + "px")
+                  .style("top", (d3.event.pageY - 28) + "px");
+              })
+
+              // fade out tooltip on mouse out
+              .on("mouseout", function(d) {
+                div.transition()
+                  .duration(200)
+                  .style("opacity", 0);
+              });
+
+              chart
+                .call( d3.brush()
+                  .extent( [ [0,0], [width, scatterHeight + margin.top] ] )
+                  .on("start brush", updateChart)
+                );
+
+            // Function that is triggered when brushing is performed
+            function updateChart() {
+              var extent = d3.event.selection;
+              dots.classed("selected", function(d) {
+                var brushed = isBrushed(extent, x(d.properties.value) + margin.left, scatterHeight/2 + margin.top);
+                var state = d3.select("#" + d.properties.name)
+                  .classed("selected", brushed);
+                console.log(state);
+                return brushed;
+              });
+            }
+          }
+
+      // Bind the data to the SVG and create one path per GeoJSON feature
+      svg.selectAll("path")
+      	.data(json.features)
+      	.enter()
+      	.append("path")
+      	.attr("d", path)
+        .attr("id", function(d) { console.log(d.properties.name); return d.properties.name; })
+      	.style("stroke", "#fff")
+      	.style("stroke-width", "1")
+      	.style("fill", function(d) {
+          if (globalStates[d.properties.name]) {
+            return fillColor(d, dataValueMagnitude);
+          } else {
+            return "#444";
+          }
+        })
+
+        .on("click", function(d) {
+          var state = d.properties.name;
+          globalStates[state] = !globalStates[state];
+          updateMap(globalFeature, globalStates);
+        })
+
+        .on("mouseover", function(d) {
+          var label = d.properties.name + ": ";
+
+          div.transition()
+            .duration(200)
+            .style("opacity", 1);
+          div.text(label + d.properties.value)
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px");
+        })
+
+        // fade out tooltip on mouse out
+        .on("mouseout", function(d) {
+          div.transition()
+            .duration(200)
+            .style("opacity", 0);
+        });
+    });
+  });
+}
+
+// Brushing code: https://www.d3-graph-gallery.com/graph/interactivity_brush.html
+// A function that return TRUE or FALSE according if a dot is in the selection or not
+function isBrushed(brush_coords, cx, cy) {
+     var x0 = brush_coords[0][0],
+         x1 = brush_coords[1][0],
+         y0 = brush_coords[0][1],
+         y1 = brush_coords[1][1];
+    var brushed = x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+    return brushed;
+}
+
+updateMap(globalFeature, globalStates);
+
+</script>
+
+</body>
+</html>

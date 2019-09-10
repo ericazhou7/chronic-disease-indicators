@@ -1,0 +1,38 @@
+{
+  "name": "chronic-disease-indicators",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.mit.edu/6894-sp19/Chronic-Disease-Indicators"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-loader": "^8.0.5",
+    "babel-preset-es2015": "^6.24.1",
+    "build-bundle": "^2.0.8",
+    "d3": "^5.9.1",
+    "d3-geo": "^1.11.3",
+    "d3-request": "^1.0.6",
+    "d3-scale": "^2.2.2",
+    "html-webpack-plugin": "^3.2.0",
+    "topojson": "^3.0.2",
+    "topojson-client": "^3.0.0",
+    "webpack": "^4.29.6",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "webpack-cli": "^3.2.3"
+  }
+}

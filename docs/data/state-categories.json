@@ -1,0 +1,74 @@
+{
+  "Northeast": {
+    "type": "region",
+    "states": [
+      "Connecticut", "Maine", "Massachusetts", "New Hampshire", "Rhode Island", "Vermont",
+      "New Jersey", "New York", "Pennsylvania"
+    ]
+  },
+  "Midwest": {
+    "type": "region",
+    "states": [
+      "Illinois", "Indiana", "Michigan", "Ohio", "Wisconsin",
+      "Iowa", "Kansas", "Minnesota", "Missouri", "Nebraska", "North Dakota", "South Dakota"
+    ]
+  },
+  "South": {
+    "type": "region",
+    "states": [
+      "Delaware", "Florida", "Georgia", "Maryland", "North Carolina", "South Carolina", "Virginia", "West Virginia",
+      "Alabama", "Kentucky", "Mississippi", "Tennessee",
+      "Arkansas", "Louisiana", "Oklahoma", "Texas"
+    ]
+  },
+  "West": {
+    "type": "region",
+    "states": [
+      "Arizona", "Colorado", "Idaho", "Montana", "Nevada", "New Mexico", "Utah", "Wyoming",
+      "Alaska", "California", "Hawaii", "Oregon", "Washington"
+    ]
+  },
+  "MoreUrban": {
+    "type": "population",
+    "description": "States with a higher percentage urban population than the US overall.",
+    "states": [
+      "California", "New Jersey", "Nevada", "Massachusetts", "Hawaii", "Florida",
+      "Rhode Island", "Utah", "Arizona", "Illinois", "Connecticut", "New York",
+      "Maryland", "Colorado", "Texas", "Washington", "Delaware", "Oregon"
+    ]
+  },
+  "LessUrban": {
+    "type": "population",
+    "description": "States with a lower percentage urban population than the US overall.",
+    "states": [
+      "Pennsylvania", "Ohio", "New Mexico", "Virginia", "Georgia", "Michigan",
+      "Kansas", "Minnesota", "Louisiana", "Nebraska", "Indiana", "Idaho",
+      "Missouri", "Wisconsin", "Tennessee", "South Carolina", "Oklahoma",
+      "North Carolina", "Alaska", "Wyoming", "Iowa", "New Hampshire",
+      "North Dakota", "Alabama", "Kentucky", "South Dakota", "Arkansas",
+      "Montana", "Mississippi", "West Virginia", "Vermont", "Maine"
+    ]
+  },
+  "Democrat": {
+    "type": "political",
+    "description": "States that voted for the Democratic candidate in the 2016 presidential election.",
+    "states": [
+      "California", "Colorado", "Connecticut", "Delaware", "Hawaii", "Illinois",
+      "Maine", "Maryland", "Massachusetts", "Minnesota", "Nevada",
+      "New Hampshire", "New Jersey", "New Mexico", "New York", "Oregon",
+      "Rhode Island", "Vermont", "Virginia", "Washington"
+    ]
+  },
+  "Republican": {
+    "type": "political",
+    "description": "States that voted for the Republican candidate in the 2016 presidential election.",
+    "states": [
+      "Alabama", "Alaska", "Arizona", "Arkansas", "Florida", "Georgia",
+      "Idaho", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+      "Michigan", "Mississippi", "Missouri", "Montana", "Nebraska",
+      "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Pennsylvania",
+      "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
+      "West Virginia", "Wisconsin", "Wyoming"
+    ]
+  }
+}

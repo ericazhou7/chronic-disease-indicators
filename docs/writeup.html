@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style type="text/css">
+  <title>Poverty in the US by Demographic: Writeup</title>
+
+  h1 {
+	color: white;
+  }
+
+  body {
+  	font: 16px sans-serif;
+    background-color: #222222;
+    color: White;
+    max-width: 800px;
+    margin: 0 auto 0;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+</style>
+</head>
+
+<body>
+  <h1>Relative to the US average, how does poverty percentage compare by state & demographic?</h1>
+
+  <h2>Design Decision Rationale</h2>
+
+  <p>
+    In this visualization, we depict the prevalence of poverty (%) across the United 
+    States. Our visualization has three major components: a US map split into states, 
+    a one-dimensional scatterplot with one point per state, and a series of buttons 
+    highlighting various state and demographic subgroups. 
+  </p>
+
+  <p>
+    Our original dataset included indicators for over 100 different "chronic disease 
+    indicators," including diseases, substance abuse problems, as well as different 
+    demographic breakdowns. Given the structure of the data, it always made sense to 
+    break down by US state, but the question we wnated to answer about the states was 
+    less clear. We originally planned to look at multiple different indicators and 
+    commpare them, but for simplicity and for further nuance, we narrowed down to one 
+    indicator, poverty, and focused on a finer-grain demographic split. This led to 
+    our final question: "Relative to the US average, how does poverty percentage 
+    compare by state & demographic?"
+  </p>
+
+  <p>
+    After we narrowed the scope of our question and dataset, we chose the US map
+    as the primary visualization arrangement of the data. We wanted to display
+    data for all fifty states in a space efficient, quickly readable, and easily
+    interactable way. We could have chosen a bar graph with many rows or columns,
+    but it would have been much less condensed, and therefore harder to draw
+    conclusions from the data at first glance. In addition, the US map is a very
+    familiar way to visually locate a particular state or set of states of interest.
+    A chart with states in alphabetically sorted order or sorted order based on
+    data points would be less intuitive in this regard. Finally, a geographic map
+    makes it much easier see trends by geographic region.
+  </p>
+
+  <p>
+    Going along with the map representation, we also wanted an easy way to encode 
+    our numeric data values. Naturally, on a map, filling in the states in different 
+    colors seemed like an effective encoding for the different poverty levels. This 
+    makes the visualization readable without having to interact, and the colors give 
+    a quick and immediate sense of high and low areas. One of the downsides of this 
+    encoding, though, is that states with close values are depicted in similar colors, 
+    so it is sometimes hard to tell exact order. However, this trade-off was worth 
+    the ease-of-use and accounted for later.
+  </p>
+
+  <p>
+    In this particular case, we scaled the colors relative to the United States average, 
+    where white represents the US average for the selected demographic group, blue 
+    represenets states below the US average, and red represents states above the US 
+    average. We chose this relative encoding to add a level of comparability as opposed 
+    to only objective percentage values. In this way, even if all values are high for 
+    a certain demographic group, rather than all of them just being shades of red 
+    (meaning high), we can still see the states that are better or worse than average. 
+    This was the biggest push for this scale over an objective overall scale (blue 
+    represents low levels, red represents high levels). Finally, the colors scale 
+    accordingly to the magnitude of the states currently selected, which allows the 
+    visualization to really highlight comparisons, especially when a small number of 
+    states is selected.
+  </p>
+
+  <p>
+    Given the relative scale of the color encoding, we still wanted to maintain some 
+    aspect of objectivity by allowing the user to know the actual poverty percentage in 
+    each state. This was accomplished in two ways. First, a tooltip appears when hovering 
+    over each state that gives the poverty percentage for the selected demographic group. 
+    Originally, we included the relative percentage in this tooltip. However, we realized 
+    that the color already encoded this information, so it was more useful to provide an 
+    overall sense of the poverty level. For example, even if a state is at US average for 
+    two demographics, it still makes a difference whether US average is 1% or 30%, and we 
+    sacrificed that information in our color scale. 
+  </p>
+
+  <p>
+    The second method for adding objectivity is the scatterplot display underneath the map. 
+    This plot has one point for each selected state, and it has the same color encoding as 
+    the map. We added this display to give a heightened sense of numeric differences as well 
+    as a sense of objectivity because it can be difficult to tell between similar colors, 
+    which as we mentioned in class, makes color a weaker encoding technique. However, with 
+    this scatterplot, we do see the objective placements of different states and relative 
+    distances between them. Keeping the color encoding does effectivity still show the US 
+    average, while the objective scale gives a good idea of what objective percentage "white" 
+    represents.
+  </p>
+
+  <p>
+    With regards to interactions, we chose three different interactions the user could 
+    have with the visualization that would highlight data related to different states 
+    and different demographics. First, each individual state is clickable to select or 
+    deselect, and upon hovering, it displays the data for that state. We could have 
+    created a separate table, abbreviation list, or some other kind of visualization 
+    that would enable the user to select or deselect states. But we felt that the most 
+    straightforward interaction would be to directly click on the state itself. If the 
+    user is focusing in on one particular state, say by hovering  on the tooltip, then 
+    it is easiest to interact with that individual state at the position of the state.
+    In addition, we added buttons on the side to handle more general interactions
+    already, so this was a more space efficient interaction.
+  </p>
+
+  <p>
+    The demographic buttons on top of the map allow the user to choose which
+    data points are visualized on the map. The chosen demographic stays highlighted
+    to reinforce that this is a constant for the data displayed on the map, as
+    opposed to the other menu buttons that change with state selection.
+    We considered having two maps that would allow the user to compare data for
+    two different demographics side by side, but we decided against it for two
+    reasons. First, it would be difficult to neatly display two maps on the page
+    and the size of the maps would have to be reduced, lessening ease of seeing
+    state level detail. Second, our guiding question is focused on state data is
+    relative to the US, not how data within a state differs by demographic.
+  </p>
+
+  <p>
+    The state selection buttons to the left of the map allow the user to choose
+    a preselected set of states to highlight. We wanted to add these preselected
+    sets because otherwise, the user could have to spend a lot of time clicking
+    individual states. As an added benefit, these sets could provide a guide to
+    the user as somewhat narrative features on interesting groupings to visualize.
+    The user can choose to select all states or deselect all states, which is
+    useful to reset the visualization to a baseline. In addition, we chose other
+    possible sets based on geographic area, urbanization, and political affiliation.
+    Geographic area is a sensible grouping for a map visualization as the data is
+    already arranged by geography. Urbanization is very closely tied to both
+    demographic and income, so it is very relevant to the metrics of our data.
+    Finally political affiliation, in particular how the state voted in the 2016
+    presidential election, is a specifically relevant way to separate states for
+    the year the data was collected from. These buttons were styled differently
+    to indicate different behavior from the demographic menu. Also, selections
+    don't stay highlighted because the set of states changes with user selection
+    of individual states.
+  </p>
+
+  <p>
+    It is important to note that with each user interaction, not only map coloring
+    but also the scaled scatter plot changes accordingly. The scatter plot is
+    meant to show the distribution of the states, and make it easy to spot outliers,
+    for any specific set of selected states. Thus it scales specifically to the
+    selected set and hides or shows state data points based on whether they are
+    selected on the map. The scale could have stayed constant, but by responding
+    dynamically with state selection it represents data more specifically for the
+    selected set.
+  </p>
+
+  <h2>Development Process</h2>
+
+  <p>
+    In terms of the development process, general idea generation was done together, 
+    and the work was split into data cleaning, website setup, and data visualization. 
+  </p>
+
+  <p>
+    Erica focused on developing the dataset via data cleaning and wrangling, as well 
+    as setting up the code to host on github. In addition to the original dataset, 
+    computations were performed to get differences from US average and to put the data 
+    into a form that was useful to input into D3. Additionally, data was incorporated 
+    from a different dataset for individual state populations. On the website side, we 
+    did have some trouble integrating our HTML/js code into Github pages. Although this 
+    may have just been an issue of front-end dev experience, we do suggest that it may 
+    be easier to just provide us with a blank working template so that more of our time 
+    could have been dedicated to developing the interactions as opposed to hosting the 
+    site. Finally, she helped design the user interface and finish some of the D3 
+    elements.
+  </p>
+
+  <p>
+    Ariel focused on developing the D3 displays and interactive elements. She
+    started by sourcing code to draw a US map in D3. She then worked on coloring
+    states in the map scaled by their poverty percentage relative to the US average.
+    She then added selectivity to the states with mouse click events. Both
+    individual states can be clicked to select and sets of states with the side
+    menu. Ariel then added buttons to select which demographic to display data for.
+    Finally she added the scatter plot that maps states to points on a scale
+    of percentage, also indicating how color maps to percent.
+  </p>
+
+  <p>
+    In terms of people-hours, the project took around 30 hours. Idea generation took 
+    around 4 hours (from each of us), data wrangling took around 4 hours, and hosting 
+    the website took around 3 hours. On the D3 side, Erica spent about 5 hours, and 
+    Ariel spent about 15 hours working on the interactions. Finally, the writeup took 
+    around an hour for each person.
+  </p>
+
+  <h2>Data Sources</h2>
+
+  <p>
+    <a href="https://data.cdc.gov/Chronic-Disease-Indicators/U-S-Chronic-Disease-Indicators-CDI-/g4ie-h725/data" style="color: white">U.S. Chronic Disease Indicators (CDI)</a> Poverty percentage rates in 2016<br>
+    <a href="https://dilemma-x.net/2016/12/21/u-s-state-populations-2016-most-populous-states/" style="color: white">U.S. State Populations</a> Estimated population by state in 2016
+  </p>
+
+</body>
+</html>

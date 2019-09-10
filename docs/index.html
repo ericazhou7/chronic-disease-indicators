@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <style type="text/css">
+  <title>Poverty in the US by Demographic</title>
+
+  h1 {
+    color: white;
+  }
+
+  h1:hover {
+    color: #50d0ff;
+  }
+
+  /* On mouse hover, lighten state color */
+  path:hover {
+    cursor: pointer;
+  }
+
+  /* Style for Custom Tooltip */
+  div.tooltip {
+   	position: absolute;
+  	text-align: center;
+    width: auto;
+    padding: 10px;
+  	font: 11px sans-serif;
+  	background: black;
+    color: white;
+  	border:1px solid grey;
+  	border-radius: 5px;
+  	pointer-events: none;
+  }
+
+  /* Legend Font Style */
+  body {
+  	font: 11px sans-serif;
+    background-color: #222222;
+    color: white;
+    text-align: center;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #title .header{
+    padding: 60px;
+    text-align: center;
+    color: white;
+    font-size: 30px;
+  }
+
+  #menu {
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 10px;
+    width: auto;
+  }
+
+  #menu .option-group {
+    overflow: hidden;
+    display: inline-block;
+    margin: 20px 20px 0px;
+  }
+
+  #menu .option {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 11px;
+    border: 1px solid white;
+    color: white;
+  }
+
+  #menu .option:hover {
+    background-color: #888888;
+    cursor: pointer;
+  }
+
+  #menu .active {
+    background-color: white;
+    color: #222222;
+  }
+
+  #state-menu {
+    position: absolute;
+    top: 120px;
+    left:2%;
+  }
+
+  #state-menu .state-option-group {
+    margin-bottom: 20px;
+  }
+
+  #state-menu .state-option {
+    /* float: left; */
+    padding: 10px 20px;
+    border: 1px solid white;
+    border-radius: 10px;
+    color: white;
+  }
+
+  #state-menu .state-option:hover {
+    background-color: #888888;
+    cursor: pointer;
+  }
+
+  #state-option-description {
+    position: absolute;
+    top: 550px;
+    left: 2%;
+    max-width: 135px;
+  }
+
+  .axis path {
+    stroke: white;
+    stroke-width: 3px;
+  }
+
+  .tick line {
+    stroke-width: 2px;
+  }
+
+  .tick text {
+    fill: white;
+    font-size: 12px;
+  }
+</style>
+</head>
+
+<body>
+  <div class="header">
+    <a href="writeup.html" style="color: white"><h1>Relative to the US average, how does poverty percentage differ by demographic & state?</h1></a>
+  </div>
+
+  <div id="menu">
+    <div class="option-group">
+      <div class="option active" id="Overall">Overall</div>
+    </div>
+
+    <div class="option-group">
+      <div class="option" id="Female">Female</div>
+      <div class="option" id="Male">Male</div>
+    </div>
+
+    <div class="option-group">
+      <div class="option" id="AmInAlaska">American Indian/Alaska Native</div>
+      <div class="option" id="Asian">Asian</div>
+      <div class="option" id="Black">Black</div>
+      <div class="option" id="Hispanic">Hispanic</div>
+      <div class="option" id="White">White</div>
+    </div>
+  </div>
+
+  <div id="state-menu">
+    <div class="state-option-group">
+      <div class="state-option" id="allStates">Select All States</div>
+      <div class="state-option" id="noStates">Deselect All States</div>
+    </div>
+    <div class="state-option-group" id="region">
+      <div class="state-option" id="Northeast">Northeast</div>
+      <div class="state-option" id="Midwest">Midwest</div>
+      <div class="state-option" id="South">South</div>
+      <div class="state-option" id="West">West</div>
+    </div>
+    <div class="state-option-group" id="population">
+      <div class="state-option" id="MoreUrban">More Urban</div>
+      <div class="state-option" id="LessUrban">Less Urban</div>
+    </div>
+    <div class="state-option-group" id="political">
+      <div class="state-option" id="Democrat">Democrat</div>
+      <div class="state-option" id="Republican">Republican</div>
+    </div>
+  </div>
+
+  <div id="map" />
+
+  <div id="state-option-description" />
+
+<script type="text/javascript" src="index_bundle.js"></script>
+
+</body>
+</html>
